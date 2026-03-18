@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SpaghettiFlow — TE Connectivity Tanger</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0c0e;--bg2:#111418;--bg3:#181d22;
+  --border:#2a3140;--border2:#3a4555;
+  --text:#c8d4e0;--text2:#6a7f96;--text3:#3a5060;
+  --accent:#f0c428;--green:#28c870;--teal:#28b8a8;--purple:#7858d8;--blue:#3888e8;--accent2:#e05a28;
+  --high:#28b8a8;--med:#3888e8;--low:#a855f7;
+}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+
+/* HEADER */
+#header{position:fixed;top:0;left:0;right:0;height:52px;background:rgba(10,12,14,.98);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 14px;z-index:200;gap:14px}
+.stats{display:flex;gap:18px;align-items:center;margin-left:auto}
+.stat-val{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;color:var(--accent);line-height:1}
+.stat-lbl{font-size:9px;letter-spacing:1px;color:var(--text2);text-transform:uppercase;margin-top:2px}
+.hdr-btns{display:flex;gap:5px;margin-left:auto}
+.hbtn{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:.8px;padding:5px 10px;border-radius:4px;cursor:pointer;transition:all .15s;text-transform:uppercase;border:none;display:flex;align-items:center;gap:5px}
+.hbtn-accent{background:var(--accent);color:#000}
+.hbtn-accent:hover{background:#ffd83a}
+.hbtn-outline{background:transparent;border:1px solid var(--border2);color:var(--text)}
+.hbtn-outline:hover{border-color:var(--accent);color:var(--accent)}
+.hbtn-outline.active{border-color:var(--accent);color:var(--accent);background:rgba(240,196,40,.08)}
+.dot-pulse{width:6px;height:6px;border-radius:50%;background:currentColor;animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.6)}}
+
+/* SIDEBAR */
+#sidebar{position:fixed;left:0;top:52px;bottom:0;width:214px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:150;overflow:hidden;transition:width .25s}
+#sidebar.collapsed{width:0}
+.sb-section{padding:11px 13px 8px;border-bottom:1px solid var(--border);flex-shrink:0}
+.sb-title{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text2);margin-bottom:7px;font-weight:600}
+.mach-item{display:flex;align-items:center;justify-content:space-between;padding:5px 8px;border-radius:5px;cursor:pointer;transition:background .12s;margin-bottom:2px;border:1px solid transparent;white-space:nowrap}
+.mach-item:hover{background:var(--bg3);border-color:var(--border)}
+.mach-item.selected{background:rgba(240,196,40,.07);border-color:rgba(240,196,40,.28)}
+.mach-name{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600;letter-spacing:.5px;display:flex;align-items:center;gap:6px}
+.mach-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.badge{font-size:8px;font-weight:700;letter-spacing:.7px;padding:2px 5px;border-radius:3px;text-transform:uppercase}
+.badge-prod{background:rgba(40,200,112,.15);color:var(--green);border:1px solid rgba(40,200,112,.3)}
+.badge-wait{background:rgba(240,164,40,.15);color:#f0a428;border:1px solid rgba(240,164,40,.3)}
+.badge-ong{background:rgba(120,88,216,.15);color:var(--purple);border:1px solid rgba(120,88,216,.3)}
+.badge-samp{background:rgba(56,136,232,.15);color:var(--blue);border:1px solid rgba(56,136,232,.3)}
+.badge-fat{background:rgba(200,212,224,.1);color:var(--text);border:1px solid var(--border)}
+#pn-panel{padding:9px 13px;flex:1;overflow-y:auto;min-width:214px}
+#pn-panel::-webkit-scrollbar{width:3px}
+#pn-panel::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.pn-header{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text2);margin-bottom:6px;font-weight:600}
+.pn-header span{color:var(--accent)}
+.pn-item{font-family:'Share Tech Mono',monospace;font-size:10px;padding:3px 6px;border-radius:3px;display:flex;align-items:center;gap:5px;margin-bottom:1px}
+.pn-item:hover{background:var(--bg3)}
+.pn-type{font-size:8px;font-weight:700;padding:1px 4px;border-radius:2px}
+.pn-fg{background:rgba(40,184,168,.15);color:var(--teal)}
+.pn-part{background:rgba(224,88,40,.12);color:var(--accent2)}
+.pn-shared{color:var(--med);font-size:9px;margin-left:auto}
+#sb-toggle{position:fixed;left:214px;top:50%;transform:translateY(-50%);width:17px;height:34px;background:var(--bg2);border:1px solid var(--border);border-left:none;border-radius:0 4px 4px 0;cursor:pointer;z-index:151;display:flex;align-items:center;justify-content:center;color:var(--text2);transition:left .25s,color .12s;font-size:11px}
+#sb-toggle:hover{color:var(--accent)}
+
+/* VIEWPORT */
+#viewport{position:fixed;left:214px;top:52px;right:0;bottom:0;overflow:hidden;background:var(--bg);transition:left .25s;cursor:grab}
+#viewport.full{left:0}
+#viewport.panning{cursor:grabbing}
+#viewport::before{content:'';position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(circle,rgba(42,49,64,.48) 1px,transparent 1px);background-size:30px 30px;z-index:0}
+
+/* WORLD — single transform target, NO will-change to avoid blurry text */
+#world{position:absolute;top:0;left:0;transform-origin:0 0}
+#flow-svg{position:absolute;top:0;left:0;overflow:visible;pointer-events:none}
+#flow-svg .fhit{pointer-events:stroke}
+
+/* CARDS — uniform 140×64 */
+.mnode{
+  position:absolute;width:140px;height:64px;
+  padding:7px 10px 6px;border-radius:7px;
+  background:var(--bg3);border:1.5px solid var(--border2);
+  cursor:grab;user-select:none;
+  display:flex;flex-direction:column;justify-content:space-between;
+  transition:border-color .15s,box-shadow .15s;
+  box-shadow:0 2px 12px rgba(0,0,0,.55);
+  /* crisp text inside transformed container */
+  -webkit-font-smoothing:antialiased;
+}
+.mnode:active{cursor:grabbing}
+.mnode:hover{border-color:rgba(240,196,40,.42);box-shadow:0 4px 18px rgba(0,0,0,.7)}
+.mnode.selected{border-color:var(--accent)!important;box-shadow:0 0 0 2px rgba(240,196,40,.2),0 4px 18px rgba(0,0,0,.7)!important}
+.mnode.highlighted{border-color:var(--high);box-shadow:0 0 0 2px rgba(240,196,40,.15)}
+.mnode-row1{display:flex;align-items:center;justify-content:space-between}
+.mnode-name{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:700;letter-spacing:.7px;color:#fff}
+.mnode-sub{font-size:14px;letter-spacing:.3px;text-transform:uppercase}
+.mnode-row3{display:flex;gap:7px}
+.mnode-stat{font-family:'Share Tech Mono',monospace;font-size:15px;color:var(--text3)}
+.mnode-stat b{color:var(--accent);font-weight:700}
+
+/* SPECIAL NODES */
+.snode-stock{
+  position:absolute;
+  padding:16px 36px;border-radius:7px;
+  background:#1a1f2a;border:1.5px solid #3888e8;
+  cursor:grab;user-select:none;
+  font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;
+  letter-spacing:2.5px;text-transform:uppercase;color:#fff;
+  text-align:center;white-space:nowrap;
+  box-shadow:0 2px 12px rgba(56,136,232,.2);
+  transition:border-color .15s,box-shadow .15s;
+  -webkit-font-smoothing:antialiased;
+}
+.snode-stock:hover{border-color:#3888e8;box-shadow:0 0 16px rgba(56,136,232,.35)}
+.snode-stock.sfinal{border-color:var(--teal);background:#0d1e1e;box-shadow:0 2px 12px rgba(40,184,168,.2)}
+.snode-stock.sfinal:hover{border-color:var(--teal);box-shadow:0 0 16px rgba(40,184,168,.35)}
+
+.snode-tool{
+  position:absolute;width:260px;height:80px;
+  border-radius:7px;
+  background:#1e2230;border:1.5px solid #e8e8e8;
+  cursor:grab;user-select:none;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;
+  letter-spacing:4px;text-transform:uppercase;color:#fff;
+  box-shadow:0 2px 12px rgba(0,0,0,.55);
+  transition:border-color .15s,box-shadow .15s;
+  -webkit-font-smoothing:antialiased;
+}
+.snode-tool:hover{border-color:var(--accent);box-shadow:0 0 16px rgba(240,196,40,.25)}
+
+/* CONTROL PANEL */
+#ctrl-panel{position:fixed;right:13px;top:64px;background:rgba(15,18,22,.97);border:1px solid var(--border);border-radius:8px;padding:11px;z-index:160;width:188px}
+.ctrl-title{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text2);margin-bottom:7px;font-weight:600}
+.ctrl-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.ctrl-lbl{font-size:11px;color:var(--text)}
+.ctrl-slider{width:76px;accent-color:var(--accent);height:3px}
+.ctrl-val{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent);min-width:28px;text-align:right}
+.ctrl-sep{height:1px;background:var(--border);margin:7px 0}
+.cb-row{display:flex;align-items:center;gap:6px;margin-bottom:5px;cursor:pointer}
+.cb-row input{accent-color:var(--accent)}
+.cb-lbl{font-size:11px;color:var(--text)}
+.cb-count{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text2);margin-left:auto}
+.ctrl-toggle{display:flex;background:var(--bg2);border-radius:4px;overflow:hidden;border:1px solid var(--border)}
+.ct-btn{font-size:9px;padding:4px 8px;cursor:pointer;transition:background .1s;font-weight:600;letter-spacing:.5px;text-transform:uppercase;border:none;color:var(--text2);background:transparent}
+.ct-btn.on{background:var(--border2);color:var(--accent)}
+
+/* BOTTOM-RIGHT PANEL: zoom row + legend stacked */
+#br-panel{position:fixed;right:13px;bottom:16px;z-index:160;display:flex;flex-direction:column;align-items:flex-end;gap:7px}
+/* Zoom row */
+#zoom-row{display:flex;gap:4px}
+.zbtn{width:32px;height:32px;background:rgba(15,18,22,.97);border:1px solid var(--border2);border-radius:4px;cursor:pointer;font-size:16px;color:var(--text);display:flex;align-items:center;justify-content:center;transition:all .12s;font-family:'Barlow Condensed',sans-serif;font-weight:700;user-select:none}
+.zbtn:hover{border-color:var(--accent);color:var(--accent)}
+#zoom-lbl{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text2);line-height:32px}
+/* Legend */
+#legend{background:rgba(15,18,22,.97);border:1px solid var(--border);border-radius:7px;padding:10px 12px;width:188px}
+.leg-title{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text2);margin-bottom:8px;font-weight:600}
+.leg-row{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.leg-line{width:28px;height:2px;border-radius:1px;flex-shrink:0}
+.leg-dash{width:28px;height:0;border-top:2px dashed;flex-shrink:0;opacity:.7}
+.leg-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+.leg-lbl{font-size:10px;color:var(--text2)}
+
+/* TOOLTIP */
+#tooltip{position:fixed;pointer-events:none;background:rgba(15,18,22,.97);border:1px solid var(--border2);border-radius:6px;padding:9px 12px;z-index:300;max-width:260px;opacity:0;transition:opacity .15s}
+#tooltip.show{opacity:1}
+.tt-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--accent);margin-bottom:4px}
+.tt-row{display:flex;justify-content:space-between;gap:14px;margin-bottom:3px}
+.tt-lbl{color:var(--text2);font-size:11px}
+.tt-val{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text)}
+
+/* TE watermark (subtle, bottom-left of canvas) */
+#te-wm{position:fixed;left:228px;bottom:14px;z-index:90;display:flex;align-items:center;gap:5px;opacity:.22;pointer-events:none;transition:left .25s}
+#te-wm.full{left:12px}
+</style>
+</head>
+<body>
+
+<!-- ══ HEADER ══ -->
+<header id="header">
+  <!-- TE Connectivity logo — top left -->
+  <svg viewBox="0 0 108 44" width="108" height="44" style="flex-shrink:0;border-radius:3px">
+    <rect width="108" height="44" fill="#e87722"/>
+    <!-- 3 pill bars: top longest → bottom shortest -->
+    <rect x="5"  y="6"  width="34" height="9"  rx="4.5" fill="white"/>
+    <rect x="5"  y="18" width="26" height="9"  rx="4.5" fill="white"/>
+    <rect x="5"  y="30" width="18" height="9"  rx="4.5" fill="white"/>
+    <!-- TE bold italic -->
+    <text x="44" y="32" font-family="'Arial Black',Impact,sans-serif" font-size="25" font-weight="900" font-style="italic" fill="white" letter-spacing="-2">TE</text>
+    <!-- connectivity -->
+    <text x="45" y="42" font-family="Arial,sans-serif" font-size="9" font-style="italic" fill="white">connectivity</text>
+  </svg>
+  <span style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;color:#e87722;letter-spacing:1.5px;text-transform:uppercase;border-left:1px solid var(--border);padding-left:10px">Tanger</span>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-val">9</div><div class="stat-lbl">Machines</div></div>
+    <div class="stat"><div class="stat-val">54</div><div class="stat-lbl">FG PNs</div></div>
+    <div class="stat"><div class="stat-val">115</div><div class="stat-lbl">Part PNs</div></div>
+    <div class="stat"><div class="stat-val">23</div><div class="stat-lbl">Connexions</div></div>
+  </div>
+
+  <div class="hdr-btns">
+    <button class="hbtn hbtn-outline active" id="btn-fg"     onclick="toggleMode('fg')">— FG flows</button>
+    <button class="hbtn hbtn-outline"        id="btn-shared" onclick="toggleMode('shared')">&#9675; Shared</button>
+    <button class="hbtn hbtn-outline"                        onclick="resetView()">&#8635; Reset</button>
+    <button class="hbtn hbtn-accent"         id="btn-anim"   onclick="toggleAnimate()"><span class="dot-pulse" id="anim-dot"></span> Animate</button>
+  </div>
+</header>
+
+<div id="sb-toggle" onclick="toggleSidebar()">&#8249;</div>
+
+<!-- ══ SIDEBAR ══ -->
+<nav id="sidebar">
+  <div class="sb-section"><div class="sb-title">Machines</div><div id="machine-list"></div></div>
+  <div id="pn-panel"><div class="pn-header">PNs &mdash; <span id="pn-lbl">A-800</span></div><div id="pn-list"></div></div>
+</nav>
+
+<!-- ══ CANVAS ══ -->
+<div id="viewport">
+  <div id="world">
+    <svg id="flow-svg"></svg>
+    <div id="nodes-layer"></div>
+  </div>
+</div>
+
+<!-- ══ CONTROL PANEL ══ -->
+<div id="ctrl-panel">
+  <div class="ctrl-title">Display</div>
+  <div class="ctrl-row"><span class="ctrl-lbl">Opacity</span><input type="range" class="ctrl-slider" min="10" max="100" value="82" id="sl-opacity" oninput="setOpacity(this.value)"><span class="ctrl-val" id="v-opacity">82%</span></div>
+  <div class="ctrl-row"><span class="ctrl-lbl">Width</span><input type="range" class="ctrl-slider" min="1" max="6" value="2" step=".5" id="sl-width" oninput="setWidth(this.value)"><span class="ctrl-val" id="v-width">2px</span></div>
+  <div class="ctrl-row"><span class="ctrl-lbl">Speed</span><input type="range" class="ctrl-slider" min="1" max="5" value="2" id="sl-speed" oninput="setSpeed(this.value)"><span class="ctrl-val" id="v-speed">2&times;</span></div>
+  <div class="ctrl-sep"></div>
+  <div class="ctrl-title">Filters</div>
+  <label class="cb-row"><input type="checkbox" checked id="cb-high" onchange="renderFlows()"><span class="cb-lbl" style="color:#28b8a8">&#9679; High (shared)</span><span class="cb-count">23 PNs</span></label>
+  <label class="cb-row"><input type="checkbox" checked id="cb-med"  onchange="renderFlows()"><span class="cb-lbl" style="color:#3888e8">&#9679; Medium (shared)</span><span class="cb-count">3+3</span></label>
+  <label class="cb-row"><input type="checkbox" checked id="cb-low"  onchange="renderFlows()"><span class="cb-lbl" style="color:#a855f7">&#9679; Low (shared)</span><span class="cb-count">1 PN</span></label>
+  <label class="cb-row"><input type="checkbox" checked id="cb-stk"  onchange="renderFlows()"><span class="cb-lbl" style="color:var(--blue)">&#9679; Stock flows</span></label>
+  <label class="cb-row"><input type="checkbox" checked id="cb-fin"  onchange="renderFlows()"><span class="cb-lbl" style="color:var(--teal)">&#9679; Final flows</span></label>
+  <div class="ctrl-sep"></div>
+  <div class="ctrl-row">
+    <span class="ctrl-lbl">Layout</span>
+    <div class="ctrl-toggle">
+      <button class="ct-btn on" id="lt-free" onclick="setLayout('free')">Free</button>
+      <button class="ct-btn"    id="lt-grid" onclick="setLayout('grid')">Grid</button>
+      <button class="ct-btn"    id="lt-arc"  onclick="setLayout('arc')">Arc</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ BOTTOM-RIGHT: zoom row + legend ══ -->
+<div id="br-panel">
+  <div id="zoom-row">
+    <div class="zbtn" onclick="zoomStep(0.83)" title="Zoom out">&#8722;</div>
+    <div class="zbtn" style="font-size:12px" onclick="resetView()" title="Reset zoom">&#8962;</div>
+    <div class="zbtn" onclick="zoomStep(1.2)"  title="Zoom in">+</div>
+    <div id="zoom-lbl" style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text2);line-height:32px;padding:0 4px">100%</div>
+  </div>
+  <div id="legend">
+    <div class="leg-title">Legend</div>
+
+    <!-- Stock Intermédiaire → A-800/801/802 -->
+    <div class="leg-row">
+      <svg width="28" height="10" style="flex-shrink:0"><line x1="0" y1="5" x2="28" y2="5" stroke="#f0c428" stroke-width="2.5" stroke-dasharray="9 5" stroke-linecap="round"/></svg>
+      <span class="leg-lbl" style="color:#f0c428">Stock Inter → A-800/801/802 <span style="color:var(--text2)">(PARTS)</span></span>
+    </div>
+
+    <!-- Tool Number → A-200/910/911/912/750/MANUAL -->
+    <div class="leg-row">
+      <svg width="28" height="10" style="flex-shrink:0"><line x1="0" y1="5" x2="28" y2="5" stroke="#28c870" stroke-width="2.5" stroke-dasharray="9 5" stroke-linecap="round"/></svg>
+      <span class="leg-lbl" style="color:#28c870">Mold → autres machines <span style="color:var(--text2)">(PARTS)</span></span>
+    </div>
+
+    <!-- All machines → Stock Final -->
+    <div class="leg-row">
+      <svg width="28" height="10" style="flex-shrink:0"><line x1="0" y1="5" x2="28" y2="5" stroke="#e83838" stroke-width="2.5" stroke-dasharray="9 5" stroke-linecap="round"/></svg>
+      <span class="leg-lbl" style="color:#e83838">Machines → Stock Final <span style="color:var(--text2)">(FG)</span></span>
+    </div>
+
+    <div class="ctrl-sep" style="margin:5px 0"></div>
+
+    <!-- A-800 ↔ A-801 shared PNs high -->
+    <div class="leg-row">
+      <svg width="28" height="10" style="flex-shrink:0"><line x1="0" y1="5" x2="28" y2="5" stroke="#28b8a8" stroke-width="2.5" stroke-dasharray="9 5" stroke-linecap="round"/></svg>
+      <span class="leg-lbl" style="color:#28b8a8">A-800 ↔ A-801 <span style="color:var(--text2)">23 shared PNs</span></span>
+    </div>
+
+    <!-- A-800/801 ↔ A-802 shared PNs med -->
+    <div class="leg-row">
+      <svg width="28" height="10" style="flex-shrink:0"><line x1="0" y1="5" x2="28" y2="5" stroke="#3888e8" stroke-width="2" stroke-dasharray="9 5" stroke-linecap="round"/></svg>
+      <span class="leg-lbl" style="color:#3888e8">A-800/801 ↔ A-802 <span style="color:var(--text2)">3 shared PNs</span></span>
+    </div>
+
+    <!-- A-911 ↔ A-912 shared FG low -->
+    <div class="leg-row">
+      <svg width="28" height="10" style="flex-shrink:0"><line x1="0" y1="5" x2="28" y2="5" stroke="#a855f7" stroke-width="2" stroke-dasharray="9 5" stroke-linecap="round"/></svg>
+      <span class="leg-lbl" style="color:#a855f7">A-911 ↔ A-912 <span style="color:var(--text2)">1 shared FG</span></span>
+    </div>
+
+    <div class="ctrl-sep" style="margin:5px 0"></div>
+
+    <!-- Machine status dots -->
+    <div class="leg-row"><div class="leg-dot" style="background:#28c870"></div><span class="leg-lbl">PROD</span></div>
+    <div class="leg-row"><div class="leg-dot" style="background:#f0a428"></div><span class="leg-lbl">Waiting / Sampling</span></div>
+    <div class="leg-row"><div class="leg-dot" style="background:#7858d8"></div><span class="leg-lbl">Ongoing</span></div>
+    <div class="leg-row"><div class="leg-dot" style="background:#3888e8"></div><span class="leg-lbl">Sampling</span></div>
+    <div class="leg-row"><div class="leg-dot" style="background:#c8d4e0;opacity:.6"></div><span class="leg-lbl">FAT</span></div>
+  </div>
+</div>
+
+<!-- TE watermark canvas -->
+<div id="te-wm">
+  <svg width="20" height="20" viewBox="0 0 108 44">
+    <rect width="108" height="44" fill="#e87722"/>
+    <rect x="5" y="6" width="34" height="9" rx="4.5" fill="white"/>
+    <rect x="5" y="18" width="26" height="9" rx="4.5" fill="white"/>
+    <rect x="5" y="30" width="18" height="9" rx="4.5" fill="white"/>
+    <text x="44" y="32" font-family="'Arial Black',sans-serif" font-size="25" font-weight="900" font-style="italic" fill="white" letter-spacing="-2">TE</text>
+    <text x="45" y="42" font-family="Arial,sans-serif" font-size="9" font-style="italic" fill="white">connectivity</text>
+  </svg>
+  <span style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;color:#e87722;text-transform:uppercase">TE Connectivity &middot; Tanger</span>
+</div>
+
+<div id="tooltip"><div class="tt-title" id="tt-title"></div><div id="tt-body"></div></div>
+
+<script>
+const CW=200, CH=96;
+
+const MACHINES=[
+  {id:'A-800',status:'PROD',color:'#28c870',fg:11,parts:12,
+   fgPNs:['1-2289033-1','2-2289032-1','1-1718888-1','1-2289032-2','1-2289032-1','1-2289033-3','1-2292481-1','2-1670916-1','2-2289032-2','2-2289033-1','1-1670916-1'],
+   partPNs:['1-1718647-1','1-1718652-1','1718648-1','1718649-1','1718650-1','1718651-2','1718651-4','1718653-1','1718654-1','1718655-1','2-1718647-1','2-1718652-1']},
+  {id:'A-801',status:'PROD',color:'#28c870',fg:13,parts:12,
+   fgPNs:['1-1670916-1','1-1670917-1','1-1718888-1','1-2289032-1','1-2289032-2','1-2289033-1','1-2289033-3','1-2292481-1','2-1670916-1','2-1670917-1','2-2289032-1','2-2289032-2','2-2289033-1'],
+   partPNs:['1-1718647-1','1-1718652-1','1718648-1','1718649-1','1718650-1','1718651-2','1718651-4','1718653-1','1718654-1','1718655-1','2-1718647-1','2-1718652-1']},
+  {id:'A-802',status:'PROD',color:'#28c870',fg:6,parts:7,
+   fgPNs:['1-2236343-1','1-2236343-5','2-2236343-1','2-2236343-5','3-2236343-1','3-2236343-5'],
+   partPNs:['1-1718652-1','1718654-1','2-1718652-1','2236344-1','2282166-1','2286483-1','3-1718652-1']},
+  {id:'A-200',status:'SAMP',color:'#3888e8',fg:7,parts:11,
+   fgPNs:['1-1355200-1','1-1355338-1','1418589-1','2-1355200-1','2-1355200-2','2-1355338-1','3-1355200-1'],
+   partPNs:['1-1355339-1','1-1355339-3','1355340-1','1355341-1','1418588-1','2-1355339-1','2-1355339-2','2-1355339-3','3-1355339-2','740030-2','973057-2']},
+  {id:'A-910',status:'PROD',color:'#28c870',fg:4,parts:6,
+   fgPNs:['1-1379913-1','1-1379913-2','1379913-1','1379913-2'],
+   partPNs:['1-1379911-1','1-1379911-2','1-1379912-2','1379911-1','1379911-2','3-1379912-2']},
+  {id:'A-911',status:'WAIT',color:'#f0a428',fg:1,parts:27,
+   fgPNs:['1-967644-1'],
+   partPNs:['1-968336-2','1-968403-1','1-968406-1','1-968406-2','1-968406-5','1-968791-1','1-968791-2','1452851-1','1718555-1','1718555-2','2-965322-1','2-968336-2','2-968403-1','2-968403-3','2-968406-1','2300817-1','965323-1','967643-1','967645-1','967645-2','968337-2','968339-2','968401-1','968402-1','968404-1','968405-1','968405-2']},
+  {id:'A-912',status:'ONGO',color:'#7858d8',fg:1,parts:23,
+   fgPNs:['1-967644-1'],
+   partPNs:['1-1394413-1','1-967360-2','1-967616-1','1-967640-1','1-967670-1','1-967670-2','1-967678-1','1-968981-1','1-968981-2','1563215-1','2-1394413-1','2-967616-1','2-967616-9','2-967670-1','2-967678-1','3-967616-1','3-967678-1','3-968981-1','7-967640-3','9-967360-1']},
+  {id:'A-750',status:'SAMP',color:'#3888e8',fg:9,parts:13,
+   fgPNs:['1-2452750-1','1-2452750-3','1-2452750-4','2452750-1','2452750-2','2452750-3','2452750-4','2452750-6','2452750-7'],
+   partPNs:['0-740030-3','0-973058-3','1-2452751-1','1-2452751-3','1-2452751-4','2348657-1','2415531-1','2452751-1','2452751-2','2452751-3','2452751-4','2452751-6','2452751-7']},
+  {id:'MANUAL',status:'FAT',color:'#c8d4e0',fg:2,parts:4,
+   fgPNs:['2466377-1','2466377-2'],
+   partPNs:['2466386-1','2466386-2','2466389-1','2466392-1']},
+];
+
+const FLOWS=[
+  {from:'A-800',to:'A-801',type:'high',sharedFG:11,sharedParts:12,total:23,strands:11,color:'#28b8a8',
+   label:'23 shared PNs — parallel production lines',
+   sharedPNs:['1-2289033-1','2-2289032-1','1-1718888-1','1-2289032-2','1-2289033-3','1-2292481-1','1-1670916-1','2-2289033-1','2-2289032-1','2-2289032-2','2-1670916-1']},
+  {from:'A-800',to:'A-802',type:'med',sharedFG:0,sharedParts:3,total:3,strands:3,color:'#3888e8',
+   label:'3 shared PART PNs — upstream supply',sharedPNs:['1-1718652-1','1718654-1','2-1718652-1']},
+  {from:'A-801',to:'A-802',type:'med',sharedFG:0,sharedParts:3,total:3,strands:3,color:'#3888e8',
+   label:'3 shared PART PNs — dual-source feed',sharedPNs:['1-1718652-1','1718654-1','2-1718652-1']},
+  {from:'A-911',to:'A-912',type:'low',sharedFG:1,sharedParts:0,total:1,strands:1,color:'#a855f7',
+   label:'1 shared FG PN — sub-assembly feed',sharedPNs:['1-967644-1']},
+];
+
+const BADGE={PROD:'badge-prod',WAIT:'badge-wait',ONGO:'badge-ong',SAMP:'badge-samp',FAT:'badge-fat'};
+const BLABEL={PROD:'PROD',WAIT:'WAITING',ONGO:'ONGOING',SAMP:'SAMPLING',FAT:'FAT'};
+
+// ── Default layout: Row0=A-800/801/802+gap A-200, Row1=A-910/911/912, Row2=A-750/MANUAL
+const CGAP=260, RGAP=280, OX=60, OY=160;
+const COLS=[OX, OX+CW+CGAP, OX+(CW+CGAP)*2, OX+(CW+CGAP)*3+130];
+const ROWS=[OY, OY+CH+RGAP, OY+(CH+RGAP)*2];
+const STOCK_INTER_W=280, TOOL_W=72;
+const DEFAULT_POS={
+  'A-800':{x:COLS[0],y:ROWS[0]},'A-801':{x:COLS[1],y:ROWS[0]},
+  'A-802':{x:COLS[2],y:ROWS[0]},'A-200':{x:COLS[3],y:ROWS[0]},
+  'A-910':{x:COLS[0],y:ROWS[1]},'A-911':{x:COLS[1],y:ROWS[1]},'A-912':{x:COLS[2],y:ROWS[1]},
+  'A-750':{x:COLS[0],y:ROWS[2]},'MANUAL':{x:COLS[1],y:ROWS[2]},
+  'STOCK_INTER':{x:COLS[1]-10, y:ROWS[0]-110},
+  'TOOL_NUM':   {x:(COLS[0]+COLS[3]+CW)/2 - 130, y:ROWS[0]-340},
+  'STOCK_FINAL':{x:COLS[0]-STOCK_INTER_W-40, y:ROWS[2]},
+};
+const LAYOUT_GRID={
+  'A-800':{x:40,y:60},'A-801':{x:240,y:60},'A-802':{x:440,y:60},
+  'A-910':{x:40,y:220},'A-911':{x:240,y:220},'A-912':{x:440,y:220},
+  'A-200':{x:40,y:380},'A-750':{x:240,y:380},'MANUAL':{x:440,y:380},
+};
+// Arc layout — spread wide to prevent card overlaps
+const LAYOUT_ARC={
+  'MANUAL':{x:300,y:10},
+  'A-800':{x:490,y:10},
+  'A-801':{x:680,y:130},
+  'A-802':{x:740,y:330},
+  'A-910':{x:580,y:540},
+  'A-911':{x:300,y:620},
+  'A-912':{x:60,y:510},
+  'A-200':{x:20,y:280},
+  'A-750':{x:80,y:80},
+};
+
+let wtx=0,wty=0,wscale=1;
+let animating=true,dashOffset=0,animSpeed=2;
+let flowOpacity=0.82,flowWidth=2;
+let selectedMachine='A-800',sbOpen=true;
+let nodePos={},animRaf=null;
+MACHINES.forEach(m=>nodePos[m.id]={...DEFAULT_POS[m.id]});
+['STOCK_INTER','TOOL_NUM','STOCK_FINAL'].forEach(id=>nodePos[id]={...DEFAULT_POS[id]});
+
+window.addEventListener('DOMContentLoaded',()=>{
+  renderSidebar();renderNodes();setPNList('A-800');
+  setupInteraction();fitView();renderFlows();startAnim();
+});
+
+// ── Round pixel translation to prevent blurry text
+function applyTransform(){
+  const tx=Math.round(wtx), ty=Math.round(wty);
+  document.getElementById('world').style.transform=`translate(${tx}px,${ty}px) scale(${wscale})`;
+  document.getElementById('zoom-lbl').textContent=Math.round(wscale*100)+'%';
+}
+
+// ── fitView: leaves 210px right for control panel, 60px top/bottom padding
+function fitView(){
+  const CTRL_W=210, PAD=55;
+  const sbW=sbOpen?214:0;
+  const vpW=window.innerWidth-sbW-CTRL_W;
+  const vpH=window.innerHeight-52;
+  const allIds=[...MACHINES.map(m=>m.id),'STOCK_INTER','TOOL_NUM','STOCK_FINAL'];
+  const xs=allIds.map(id=>nodePos[id].x), ys=allIds.map(id=>nodePos[id].y);
+  const minX=Math.min(...xs),maxX=Math.max(...xs)+CW+80;
+  const minY=Math.min(...ys),maxY=Math.max(...ys)+CH+30;
+  const cw=maxX-minX, ch=maxY-minY;
+  const s=Math.min((vpW-2*PAD)/cw,(vpH-2*PAD)/ch,1);
+  wtx=Math.round(PAD-minX*s);
+  wty=Math.round((vpH-ch*s)/2-minY*s);
+  wscale=Math.round(s*100)/100;
+  applyTransform();
+}
+
+function resetView(){
+  MACHINES.forEach(m=>nodePos[m.id]={...DEFAULT_POS[m.id]});
+['STOCK_INTER','TOOL_NUM','STOCK_FINAL'].forEach(id=>nodePos[id]={...DEFAULT_POS[id]});
+  renderNodes();fitView();renderFlows();
+  ['lt-free','lt-grid','lt-arc'].forEach(i=>document.getElementById(i).classList.remove('on'));
+  document.getElementById('lt-free').classList.add('on');
+}
+
+// ── Sidebar
+function renderSidebar(){
+  document.getElementById('machine-list').innerHTML=MACHINES.map(m=>`
+    <div class="mach-item ${selectedMachine===m.id?'selected':''}" onclick="selectMachine('${m.id}')">
+      <div class="mach-name"><div class="mach-dot" style="background:${m.color}"></div>${m.id}</div>
+      <span class="badge ${BADGE[m.status]}">${BLABEL[m.status]}</span>
+    </div>`).join('');
+}
+function setPNList(id){
+  selectedMachine=id;
+  document.getElementById('pn-lbl').textContent=id;
+  const m=MACHINES.find(x=>x.id===id);if(!m)return;
+  const shFG=getShared(id,'fgPNs'),shPT=getShared(id,'partPNs');
+  document.getElementById('pn-list').innerHTML=[
+    ...m.fgPNs.map(p=>({p,t:'FG',s:shFG.has(p)})),
+    ...m.partPNs.map(p=>({p,t:'PART',s:shPT.has(p)}))
+  ].map(({p,t,s})=>`<div class="pn-item"><span class="pn-type ${t==='FG'?'pn-fg':'pn-part'}">${t}</span><span>${p}</span>${s?'<span class="pn-shared">&#8651;</span>':''}</div>`).join('');
+  renderSidebar();
+}
+function getShared(id,key){
+  const mine=new Set(MACHINES.find(x=>x.id===id)[key]);
+  const out=new Set();
+  MACHINES.forEach(o=>{if(o.id!==id)o[key].forEach(p=>{if(mine.has(p))out.add(p);});});
+  return out;
+}
+function selectMachine(id){
+  selectedMachine=id;setPNList(id);
+  document.querySelectorAll('.mnode').forEach(n=>n.classList.remove('selected','highlighted'));
+  const sel=document.getElementById('n-'+eid(id));
+  if(sel)sel.classList.add('selected');
+  getConnected(id).forEach(c=>{
+    const cn=document.getElementById('n-'+eid(c.id));if(cn)cn.classList.add('highlighted');
+  });
+  renderFlows();
+}
+function eid(id){return id.replace(/[^a-z0-9]/gi,'');}
+function toggleSidebar(){
+  sbOpen=!sbOpen;
+  document.getElementById('sidebar').classList.toggle('collapsed',!sbOpen);
+  document.getElementById('viewport').classList.toggle('full',!sbOpen);
+  document.getElementById('te-wm').classList.toggle('full',!sbOpen);
+  const t=document.getElementById('sb-toggle');
+  t.innerHTML=sbOpen?'&#8249;':'&#8250;';
+  t.style.left=(sbOpen?'214':'0')+'px';
+  setTimeout(()=>{fitView();renderFlows();},260);
+}
+
+// ── Nodes
+function renderNodes(){
+  const layer=document.getElementById('nodes-layer');layer.innerHTML='';
+  MACHINES.forEach(m=>{
+    const p=nodePos[m.id];
+    const el=document.createElement('div');
+    el.className=`mnode ${selectedMachine===m.id?'selected':''}`;
+    el.id='n-'+eid(m.id);
+    el.style.cssText=`left:${p.x}px;top:${p.y}px;width:${CW}px;height:${CH}px`;
+    el.innerHTML=`<div class="mnode-row1"><span class="mnode-name">${m.id}</span><span class="badge ${BADGE[m.status]}">${BLABEL[m.status]}</span></div><div class="mnode-sub" style="color:${m.color}">&#9679; ${BLABEL[m.status]}</div><div class="mnode-row3"><span class="mnode-stat">FG <b>${m.fg}</b></span><span class="mnode-stat">PART <b>${m.parts}</b></span><span class="mnode-stat">TOTAL <b>${m.fg+m.parts}</b></span></div>`;
+    makeDraggable(el,m.id);
+    el.addEventListener('click',()=>selectMachine(m.id));
+    el.addEventListener('mouseenter',e=>showNodeTT(m,e));
+    el.addEventListener('mouseleave',hideTT);
+    layer.appendChild(el);
+  });
+
+  // ── STOCK INTERMÉDIAIRE
+  {
+    const p=nodePos['STOCK_INTER'];
+    const el=document.createElement('div');
+    el.className='snode-stock'; el.id='n-STOCKINTER';
+    el.style.cssText=`left:${p.x}px;top:${p.y}px;width:${STOCK_INTER_W}px`;
+    el.innerHTML='STOCK INTERM&Eacute;DIAIRE';
+    makeSpecialDraggable(el,'STOCK_INTER');
+    layer.appendChild(el);
+  }
+  // ── TOOL NUMBER
+  {
+    const p=nodePos['TOOL_NUM'];
+    const el=document.createElement('div');
+    el.className='snode-tool'; el.id='n-TOOLNUM';
+    el.style.cssText=`left:${p.x}px;top:${p.y}px`;
+    el.innerHTML='MOLD';
+    makeSpecialDraggable(el,'TOOL_NUM');
+    layer.appendChild(el);
+  }
+  // ── STOCK FINAL
+  {
+    const p=nodePos['STOCK_FINAL'];
+    const el=document.createElement('div');
+    el.className='snode-stock sfinal'; el.id='n-STOCKFINAL';
+    el.style.cssText=`left:${p.x}px;top:${p.y}px;width:${STOCK_INTER_W}px`;
+    el.innerHTML='STOCK FINAL';
+    makeSpecialDraggable(el,'STOCK_FINAL');
+    layer.appendChild(el);
+  }
+}
+function getConnected(id){
+  return FLOWS.filter(f=>f.from===id||f.to===id).map(f=>({id:f.from===id?f.to:f.from,type:f.type}));
+}
+
+// ── Drag (world coords)
+function getVPLeft(){return sbOpen?214:0;}
+function makeDraggable(el,id){
+  let drag=false,ox=0,oy=0;
+  el.addEventListener('mousedown',e=>{
+    if(e.button!==0)return;drag=true;
+    ox=(e.clientX-getVPLeft()-wtx)/wscale-nodePos[id].x;
+    oy=(e.clientY-52-wty)/wscale-nodePos[id].y;
+    el.style.zIndex=500;e.stopPropagation();e.preventDefault();
+  });
+  window.addEventListener('mousemove',e=>{
+    if(!drag)return;
+    const nx=(e.clientX-getVPLeft()-wtx)/wscale-ox;
+    const ny=(e.clientY-52-wty)/wscale-oy;
+    nodePos[id]={x:nx,y:ny};
+    el.style.left=nx+'px';el.style.top=ny+'px';
+    renderFlows();
+  });
+  window.addEventListener('mouseup',()=>{if(drag){drag=false;el.style.zIndex='';}});
+}
+
+// ── Drag for special (fixed-size) nodes
+function makeSpecialDraggable(el,id){
+  let drag=false,ox=0,oy=0;
+  el.addEventListener('mousedown',e=>{
+    if(e.button!==0)return;drag=true;
+    ox=(e.clientX-getVPLeft()-wtx)/wscale-nodePos[id].x;
+    oy=(e.clientY-52-wty)/wscale-nodePos[id].y;
+    el.style.zIndex=500;e.stopPropagation();e.preventDefault();
+  });
+  window.addEventListener('mousemove',e=>{
+    if(!drag)return;
+    const nx=(e.clientX-getVPLeft()-wtx)/wscale-ox;
+    const ny=(e.clientY-52-wty)/wscale-oy;
+    nodePos[id]={x:nx,y:ny};
+    el.style.left=nx+'px';el.style.top=ny+'px';
+    renderFlows();
+  });
+  window.addEventListener('mouseup',()=>{if(drag){drag=false;el.style.zIndex='';}});
+}
+
+// ── Interaction (pan + wheel zoom)
+function setupInteraction(){
+  const vp=document.getElementById('viewport');
+  let pan=false,sx=0,sy=0,stx=0,sty=0;
+  vp.addEventListener('mousedown',e=>{
+    if(e.target.closest('.mnode'))return;
+    pan=true;sx=e.clientX;sy=e.clientY;stx=wtx;sty=wty;
+    vp.classList.add('panning');
+  });
+  window.addEventListener('mousemove',e=>{
+    if(!pan)return;
+    wtx=stx+(e.clientX-sx);wty=sty+(e.clientY-sy);applyTransform();
+  });
+  window.addEventListener('mouseup',()=>{pan=false;document.getElementById('viewport').classList.remove('panning');});
+  vp.addEventListener('wheel',e=>{
+    e.preventDefault();
+    const f=e.deltaY<0?1.1:0.9;
+    const r=vp.getBoundingClientRect();
+    const cx=e.clientX-r.left,cy=e.clientY-r.top;
+    wtx=cx-(cx-wtx)*f;wty=cy-(cy-wty)*f;
+    wscale=Math.min(4,Math.max(0.1,wscale*f));
+    applyTransform();
+  },{passive:false});
+}
+function zoomStep(f){
+  const r=document.getElementById('viewport').getBoundingClientRect();
+  const cx=r.width/2,cy=r.height/2;
+  wtx=cx-(cx-wtx)*f;wty=cy-(cy-wty)*f;
+  wscale=Math.min(4,Math.max(0.1,wscale*f));
+  applyTransform();
+}
+
+// ══════════════════════════════════════════════════════
+// FLOW DIRECTION — determine arc side (UP or DOWN) per flow
+// Based on obstacle detection in the connection corridor
+// ══════════════════════════════════════════════════════
+function getFlowDir(fromId,toId){
+  const pa=nodePos[fromId],pb=nodePos[toId];
+  const acx=pa.x+CW/2,acy=pa.y+CH/2;
+  const bcx=pb.x+CW/2,bcy=pb.y+CH/2;
+  const rxMin=Math.min(acx,bcx)-CW*0.4;
+  const rxMax=Math.max(acx,bcx)+CW*0.4;
+  let hasBlockAbove=false;
+  MACHINES.forEach(m=>{
+    if(m.id===fromId||m.id===toId)return;
+    const p=nodePos[m.id];
+    const cx=p.x+CW/2;
+    if(cx<rxMin||cx>rxMax)return;
+    const t=rxMax===rxMin?0.5:(cx-rxMin)/(rxMax-rxMin);
+    const lineY=acy+(bcy-acy)*t;
+    if(p.y-20<=lineY&&lineY<=p.y+CH+20&&p.y<(acy+bcy)/2) hasBlockAbove=true;
+  });
+  return hasBlockAbove?1:-1; // 1=arc down, -1=arc up (default)
+}
+
+// ══════════════════════════════════════════════════════
+// RENDER FLOWS — Spaghetti fan style
+//
+// Key insight from reference image:
+//  • ALL strands of a flow arc in the SAME direction (all up or all down)
+//  • Strands exit/enter at spread Y positions across the card side edge
+//  • Arc magnitude increases for strands on the "far side" from the arc direction:
+//      ↑ arcing UP   → bottom-most strands get the largest arcs
+//      ↓ arcing DOWN → top-most strands get the largest arcs
+//  • This creates the characteristic fan/bundle spaghetti shape
+// ══════════════════════════════════════════════════════
+function renderFlows(){
+  const svg=document.getElementById('flow-svg');
+  svg.innerHTML='';
+  const fH=document.getElementById('cb-high').checked;
+  const fM=document.getElementById('cb-med').checked;
+  const fL=document.getElementById('cb-low').checked;
+
+  const defs=document.createElementNS('http://www.w3.org/2000/svg','defs');
+  defs.innerHTML=`
+    <filter id="glow" x="-70%" y="-70%" width="240%" height="240%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <marker id="arr-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M1 1L9 5L1 9" fill="none" stroke="#3888e8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <marker id="arr-teal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M1 1L9 5L1 9" fill="none" stroke="#28b8a8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <marker id="arr-grey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M1 1L9 5L1 9" fill="none" stroke="#aabbd0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <filter id="glow-blue" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glow-teal" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  `;
+  svg.appendChild(defs);
+
+  // ══════════════════════════════════════════════════════
+  // SPECIAL FLOWS
+  // YELLOW (sfare):  Stock Intermédiaire → A-800 / A-801 / A-802  (PARTS IN)
+  // RED    (7mare):  A-800 / A-801 / A-802 → Stock Final           (FG OUT)
+  // ══════════════════════════════════════════════════════
+  const showStk = document.getElementById('cb-stk').checked;
+  const showFin = document.getElementById('cb-fin').checked;
+
+  // Get bounding info of a special banner node
+  function specialBox(id){
+    const elId={STOCK_INTER:'n-STOCKINTER',TOOL_NUM:'n-TOOLNUM',STOCK_FINAL:'n-STOCKFINAL'}[id];
+    const el=document.getElementById(elId);
+    const p=nodePos[id];
+    const w=el?el.offsetWidth:STOCK_INTER_W;
+    const h=el?el.offsetHeight:32;
+    return{x:p.x,y:p.y,w,h,cx:p.x+w/2,cy:p.y+h/2};
+  }
+
+  // Draw a spaghetti-style fan between two arbitrary points
+  function drawFan(x1,y1,x2,y2,col,nStrands,dashArr){
+    const midX=(x1+x2)/2, midY=(y1+y2)/2;
+    const dist=Math.hypot(x2-x1,y2-y1);
+    const arcMin=Math.max(12,dist*0.05);
+    const arcMax=Math.max(75,dist*0.50);
+    const slots=Math.ceil(nStrands/2);
+    for(let i=0;i<nStrands;i++){
+      const sd=(i%2===0)?-1:1;
+      const slot=Math.floor(i/2);
+      const sf=slots<=1?0:slot/(slots-1);
+      const mag=arcMin+sf*(arcMax-arcMin);
+      const cpY=midY+sd*mag;
+      const d=`M${x1.toFixed(1)},${y1.toFixed(1)} Q${midX.toFixed(1)},${cpY.toFixed(1)} ${x2.toFixed(1)},${y2.toFixed(1)}`;
+      const alpha=flowOpacity*(0.88-sf*0.38);
+      const lw=flowWidth*(1.05-sf*0.28);
+      const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+      path.setAttribute('d',d);
+      path.setAttribute('fill','none');
+      path.setAttribute('stroke',col);
+      path.setAttribute('stroke-width',lw.toFixed(2));
+      if(dashArr) path.setAttribute('stroke-dasharray',dashArr);
+      path.setAttribute('stroke-dashoffset',(dashOffset*(0.65+i*0.04)).toFixed(1));
+      path.setAttribute('opacity',alpha.toFixed(2));
+      path.setAttribute('stroke-linecap','round');
+      // glow on outermost strands
+      if(slot===slots-1) path.setAttribute('filter','url(#glow)');
+      svg.appendChild(path);
+    }
+    // Arrowhead at destination
+    const angle=Math.atan2(y2-y1,x2-x1);
+    const aSize=7;
+    const ah=document.createElementNS('http://www.w3.org/2000/svg','polygon');
+    const ax1=x2-aSize*Math.cos(angle-0.38), ay1=y2-aSize*Math.sin(angle-0.38);
+    const ax2=x2-aSize*Math.cos(angle+0.38), ay2=y2-aSize*Math.sin(angle+0.38);
+    ah.setAttribute('points',`${x2},${y2} ${ax1},${ay1} ${ax2},${ay2}`);
+    ah.setAttribute('fill',col);ah.setAttribute('opacity',(flowOpacity*0.9).toFixed(2));
+    svg.appendChild(ah);
+  }
+
+  // ── TOOL NUMBER → STOCK INTERMÉDIAIRE (thin grey, tool reference)
+  if(showStk){
+    const t=specialBox('TOOL_NUM');
+    const s=specialBox('STOCK_INTER');
+    // edge point on Tool circle toward Stock Inter
+    const dx=s.cx-t.cx, dy=s.cy-t.cy, r=t.w/2;
+    const len=Math.hypot(dx,dy);
+    const ex=t.cx+dx/len*r, ey=t.cy+dy/len*r;
+    // edge on Stock Inter banner toward Tool
+    const dx2=t.cx-s.cx, dy2=t.cy-s.cy;
+    const len2=Math.hypot(dx2,dy2);
+    const sx=Math.min(s.w/2/Math.abs(dx2||0.01),s.h/2/Math.abs(dy2||0.01));
+    const bx2=s.cx+dx2/len2*(s.w/2<s.h/2?s.w/2:s.h/2), by2=s.cy+dy2/len2*(s.w/2<s.h/2?s.w/2:s.h/2);
+    const edgex=s.cx+dx2*Math.min(s.w/2/Math.abs(dx2||0.01),s.h/2/Math.abs(dy2||0.01));
+    const edgey=s.cy+dy2*Math.min(s.w/2/Math.abs(dx2||0.01),s.h/2/Math.abs(dy2||0.01));
+    drawFan(ex,ey,edgex,edgey,'#aabbd0',1,'6 4');
+  }
+
+  // ══════════════════════════════════════════
+  // Helper: add hoverable hit path with tooltip
+  // ══════════════════════════════════════════
+  function addHit(x1,y1,x2,y2,titleHtml,bodyHtml){
+    const midX=(x1+x2)/2, midY=(y1+y2)/2;
+    const hit=document.createElementNS('http://www.w3.org/2000/svg','path');
+    hit.setAttribute('d',`M${x1},${y1} Q${midX},${midY} ${x2},${y2}`);
+    hit.setAttribute('fill','none');hit.setAttribute('stroke','transparent');
+    hit.setAttribute('stroke-width','28');hit.classList.add('fhit');hit.style.cursor='pointer';
+    hit.addEventListener('mouseenter',e=>{
+      document.getElementById('tt-title').innerHTML=titleHtml;
+      document.getElementById('tt-body').innerHTML=bodyHtml;
+      document.getElementById('tooltip').classList.add('show');moveTT(e);
+    });
+    hit.addEventListener('mousemove',e=>moveTT(e));
+    hit.addEventListener('mouseleave',hideTT);
+    svg.appendChild(hit);
+  }
+
+  // ── STOCK INTERMÉDIAIRE → A-800, A-801, A-802  (YELLOW — PART PNs)
+  if(showStk){
+    const s=specialBox('STOCK_INTER');
+    ['A-800','A-801','A-802'].forEach(mid=>{
+      const m=MACHINES.find(x=>x.id===mid);
+      const mp=nodePos[mid];
+      const fromX=s.cx, fromY=s.y+s.h;
+      const toX=mp.x+CW/2, toY=mp.y;
+      const n=m.partPNs.length;
+      drawFan(fromX,fromY,toX,toY,'#f0c428',n,'9 5');
+      addHit(fromX,fromY,toX,toY,
+        `Stock Interm&#233;diaire <span style="color:#f0c428">&#8594;</span> ${mid}`,
+        `<div class="tt-row"><span class="tt-lbl">PART PNs</span><span class="tt-val" style="color:#f0c428">${n}</span></div>
+         <div style="margin-top:5px;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text2);line-height:1.7">${m.partPNs.join('<br>')}</div>`
+      );
+    });
+  }
+
+  // ── TOOL NUMBER → A-200, A-910, A-911, A-912, A-750, MANUAL  (YELLOW — PART PNs)
+  if(showStk){
+    const t=specialBox('TOOL_NUM');
+    function toolEdge(tx,ty){
+      const dx=tx-t.cx,dy=ty-t.cy;
+      if(Math.abs(dx)<0.01&&Math.abs(dy)<0.01)return{x:t.cx,y:t.cy};
+      const s=Math.min((t.w/2)/Math.abs(dx),(t.h/2)/Math.abs(dy));
+      return{x:t.cx+dx*s,y:t.cy+dy*s};
+    }
+    ['A-200','A-910','A-911','A-912','A-750','MANUAL'].forEach(mid=>{
+      const m=MACHINES.find(x=>x.id===mid);
+      const mp=nodePos[mid];
+      const toX=mp.x+CW/2, toY=mp.y;
+      const {x:fx,y:fy}=toolEdge(toX,toY);
+      const n=m.partPNs.length;
+      drawFan(fx,fy,toX,toY,'#28c870',n,'9 5');
+      addHit(fx,fy,toX,toY,
+        `Tool Number <span style="color:#f0c428">&#8594;</span> ${mid}`,
+        `<div class="tt-row"><span class="tt-lbl">PART PNs</span><span class="tt-val" style="color:#f0c428">${n}</span></div>
+         <div style="margin-top:5px;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text2);line-height:1.7">${m.partPNs.join('<br>')}</div>`
+      );
+    });
+  }
+
+  // ── ALL MACHINES → STOCK FINAL  (RED — FG PNs)
+  if(showFin){
+    const f=specialBox('STOCK_FINAL');
+    MACHINES.forEach(m=>{
+      const mp=nodePos[m.id];
+      const fromX=mp.x+CW/2, fromY=mp.y+CH;
+      const toX=f.cx, toY=f.y;
+      const n=m.fgPNs.length;
+      drawFan(fromX,fromY,toX,toY,'#e83838',n,'9 5');
+      addHit(fromX,fromY,toX,toY,
+        `${m.id} <span style="color:#f0a428">&#8594;</span> Stock Final`,
+        `<div class="tt-row"><span class="tt-lbl">FG PNs</span><span class="tt-val" style="color:#e83838">${n}</span></div>
+         <div style="margin-top:5px;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text2);line-height:1.7">${m.fgPNs.join('<br>')}</div>`
+      );
+    });
+  }
+
+    FLOWS.forEach(f=>{
+    if(!(f.type==='high'&&fH||f.type==='med'&&fM||f.type==='low'&&fL))return;
+
+    const pa=nodePos[f.from],pb=nodePos[f.to];
+    const acx=pa.x+CW/2,acy=pa.y+CH/2;
+    const bcx=pb.x+CW/2,bcy=pb.y+CH/2;
+    const dist=Math.hypot(bcx-acx,bcy-acy);
+    const n=f.strands;
+
+    // Determine ONE arc direction for ALL strands of this flow
+    const dir=getFlowDir(f.from,f.to); // -1=up, +1=down
+
+    // Arc range
+    const arcMin=Math.max(10,dist*0.04);
+    const arcMax=Math.max(85,dist*0.52);
+
+    // Is connection primarily horizontal or vertical?
+    const dxAbs=Math.abs(bcx-acx),dyAbs=Math.abs(bcy-acy);
+    const horiz=dxAbs>=dyAbs*0.7;
+
+    // ALL strands share the same start/end anchor (card center edge).
+    // The fan spread lives ONLY in the control-point, never at the attachment.
+    // This gives clean single-point connections with graceful arcs fanning out.
+    let ax, ay, bx, by;
+    if(horiz){
+      ax = bcx>acx ? pa.x+CW : pa.x;
+      bx = bcx>acx ? pb.x    : pb.x+CW;
+      ay = acy;   // vertical center of source card
+      by = bcy;   // vertical center of dest card
+    } else {
+      ax = acx;  bx = bcx;
+      ay = bcy>acy ? pa.y+CH : pa.y;
+      by = bcy>acy ? pb.y    : pb.y+CH;
+    }
+
+    // SYMMETRIC BIDIRECTIONAL FAN
+    // Strand i=0 -> up slot0, i=1 -> down slot0, i=2 -> up slot1, i=3 -> down slot1 ...
+    // Centre slot is shallowest, outer slots deepest.
+    let obstacleShift=0;
+    {
+      const rMin=Math.min(ax,bx)-CW*0.2,rMax=Math.max(ax,bx)+CW*0.2;
+      MACHINES.forEach(m=>{
+        if(m.id===f.from||m.id===f.to)return;
+        const p=nodePos[m.id];const cx=p.x+CW/2;
+        if(cx<rMin||cx>rMax)return;
+        const tt=rMax===rMin?0.5:(cx-rMin)/(rMax-rMin);
+        const lineY=ay+(by-ay)*tt;
+        if(lineY>=p.y-18&&lineY<=p.y+CH+18)
+          obstacleShift=Math.max(obstacleShift,CH+40);
+      });
+    }
+    const midX=(ax+bx)/2;
+    const midY=(ay+by)/2;
+    const slots=Math.ceil(n/2);
+    for(let i=0;i<n;i++){
+      const strandDir=(i%2===0)?-1:1;
+      const slot=Math.floor(i/2);
+      const slotFrac=slots<=1?0:slot/(slots-1);
+      const arcMag=arcMin+slotFrac*(arcMax-arcMin)+obstacleShift;
+      const cpY=midY+strandDir*arcMag;
+      const d=`M${ax.toFixed(1)},${ay.toFixed(1)} Q${midX.toFixed(1)},${cpY.toFixed(1)} ${bx.toFixed(1)},${by.toFixed(1)}`;
+      const alpha=flowOpacity*(0.85-slotFrac*0.40);
+      const w=flowWidth*(1.05-slotFrac*0.30);
+      const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+      path.setAttribute('d',d);
+      path.setAttribute('fill','none');
+      path.setAttribute('stroke',f.color);
+      path.setAttribute('stroke-width',w.toFixed(2));
+      path.setAttribute('stroke-dasharray','9 5');
+      path.setAttribute('stroke-dashoffset',(dashOffset*(0.65+i*0.04)).toFixed(1));
+      path.setAttribute('opacity',alpha.toFixed(2));
+      path.setAttribute('stroke-linecap','round');
+      if(f.type==='high'&&slot===slots-1) path.setAttribute('filter','url(#glow)');
+      svg.appendChild(path);
+    }
+    // Hit area on shallowest upper arc
+    const cpHit=midY+(-1)*(arcMin+obstacleShift);
+    const hit=document.createElementNS('http://www.w3.org/2000/svg','path');
+    hit.setAttribute('d',`M${ax},${ay} Q${midX},${cpHit} ${bx},${by}`);
+    hit.setAttribute('fill','none');
+    hit.setAttribute('stroke','transparent');
+    hit.setAttribute('stroke-width','28');
+    hit.classList.add('fhit');
+    hit.style.cursor='pointer';
+    hit.addEventListener('mouseenter',e=>showFlowTT(f,e));
+    hit.addEventListener('mousemove',e=>moveTT(e));
+    hit.addEventListener('mouseleave',hideTT);
+    svg.appendChild(hit);
+  });
+}
+
+// ── Animation
+function startAnim(){
+  cancelAnimationFrame(animRaf);
+  (function loop(){
+    if(animating){dashOffset-=animSpeed*0.38;renderFlows();}
+    animRaf=requestAnimationFrame(loop);
+  })();
+}
+function toggleAnimate(){
+  animating=!animating;
+  const btn=document.getElementById('btn-anim'),dot=document.getElementById('anim-dot');
+  if(!animating){btn.style.cssText='background:var(--bg2);color:var(--text);border:1px solid var(--border2)';dot.style.animationPlayState='paused';}
+  else{btn.style.cssText='background:var(--accent);color:#000;border:none';dot.style.animationPlayState='running';}
+}
+function toggleMode(m){
+  document.getElementById('btn-fg').classList.toggle('active',m==='fg');
+  document.getElementById('btn-shared').classList.toggle('active',m==='shared');
+}
+function setOpacity(v){flowOpacity=v/100;document.getElementById('v-opacity').textContent=v+'%';}
+function setWidth(v){flowWidth=+v;document.getElementById('v-width').textContent=v+'px';}
+function setSpeed(v){animSpeed=+v;document.getElementById('v-speed').textContent=v+'x';}
+
+function setLayout(l){
+  ['lt-free','lt-grid','lt-arc'].forEach(id=>document.getElementById(id).classList.remove('on'));
+  document.getElementById('lt-'+l).classList.add('on');
+  if(l==='free'){resetView();return;}
+  const target=l==='grid'?LAYOUT_GRID:LAYOUT_ARC;
+  const start={};MACHINES.forEach(m=>start[m.id]={...nodePos[m.id]});
+  let step=0;const STEPS=24;
+  (function go(){
+    step++;const t=step/STEPS,e=t<.5?2*t*t:-1+(4-2*t)*t;
+    MACHINES.forEach(m=>{
+      const s=start[m.id],d=target[m.id];
+      nodePos[m.id]={x:s.x+(d.x-s.x)*e,y:s.y+(d.y-s.y)*e};
+      const el=document.getElementById('n-'+eid(m.id));
+      if(el){el.style.left=nodePos[m.id].x+'px';el.style.top=nodePos[m.id].y+'px';}
+    });
+    renderFlows();if(step<STEPS)requestAnimationFrame(go);
+    else if(l==='arc') fitView();
+  })();
+}
+
+// ── Tooltips
+function showFlowTT(f,e){
+  const badge=f.type==='high'?'High':f.type==='med'?'Medium':'Low';
+  document.getElementById('tt-title').innerHTML=`${f.from} &#8652; ${f.to} <span style="font-size:10px;color:${f.color}">${badge}</span>`;
+  document.getElementById('tt-body').innerHTML=`
+    <div class="tt-row"><span class="tt-lbl">Shared FG PNs</span><span class="tt-val" style="color:var(--teal)">${f.sharedFG}</span></div>
+    <div class="tt-row"><span class="tt-lbl">Shared PART PNs</span><span class="tt-val" style="color:var(--accent2)">${f.sharedParts}</span></div>
+    <div class="tt-row"><span class="tt-lbl">Total connections</span><span class="tt-val">${f.total}</span></div>
+    <div style="margin-top:5px;font-size:11px;color:var(--text2)">${f.label}</div>
+    <div style="margin-top:4px;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);line-height:1.7">${f.sharedPNs.slice(0,5).join('<br>')}${f.sharedPNs.length>5?'<br><span style="color:var(--text2)">+'+(f.sharedPNs.length-5)+' more</span>':''}</div>`;
+  document.getElementById('tooltip').classList.add('show');moveTT(e);
+}
+function showNodeTT(m,e){
+  const conns=getConnected(m.id);
+  document.getElementById('tt-title').textContent=m.id;
+  document.getElementById('tt-body').innerHTML=`
+    <div class="tt-row"><span class="tt-lbl">Status</span><span class="tt-val" style="color:${m.color}">${BLABEL[m.status]}</span></div>
+    <div class="tt-row"><span class="tt-lbl">FG PNs</span><span class="tt-val">${m.fg}</span></div>
+    <div class="tt-row"><span class="tt-lbl">PART PNs</span><span class="tt-val">${m.parts}</span></div>
+    <div class="tt-row"><span class="tt-lbl">Connections</span><span class="tt-val" style="color:var(--accent)">${conns.length}</span></div>
+    <div style="margin-top:4px;font-size:11px;color:var(--text2)">${conns.length?'Connected to: '+conns.map(c=>'<span style="color:var(--accent)">'+c.id+'</span>').join(', '):'No shared PNs with other machines'}</div>`;
+  document.getElementById('tooltip').classList.add('show');moveTT(e);
+}
+function moveTT(e){
+  const tt=document.getElementById('tooltip');
+  tt.style.left=Math.min(e.clientX+14,window.innerWidth-268)+'px';
+  tt.style.top=Math.min(Math.max(e.clientY-10,4),window.innerHeight-175)+'px';
+}
+function hideTT(){document.getElementById('tooltip').classList.remove('show');}
+</script>
+</body>
+</html>
